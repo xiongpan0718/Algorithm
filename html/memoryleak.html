@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button>click</button>
+  <script>
+    function createIncrease(){
+      const doms = new Array(10000).fill(0).map((_, i) => {
+        const dom = document.createElement('div');
+        dom.innerHTML = i;
+        return dom;
+      })
+      function increase(){
+        doms.forEach(dom => {
+          dom.innerHTML = Number(dom.innerHTML) + 1;
+        });
+      }
+      function _temp(){}
+      return { increase, _temp };
+    }
+    let increase;
+    const btn = document.querySelector('button');
+    function handleclick() {
+      increase = createIncrease().increase;
+      increase();
+      // btn.removeEventListener('click', handleclick);
+      // increase = null;
+    }
+    btn.addEventListener('click', handleclick)
+  </script>
+</body>
+</html>

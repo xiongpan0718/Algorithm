@@ -1,0 +1,21 @@
+{
+  "name": "algorithm",
+  "version": "1.0.0",
+  "description": "Algorithm for programming testing",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node index.js --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiongpan0718/Algorithm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiongpan0718/Algorithm/issues"
+  },
+  "homepage": "https://github.com/xiongpan0718/Algorithm#readme"
+}

@@ -1,0 +1,124 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cut image</title>
+</head>
+
+<body>
+  <input type="file" />
+  <img class="preview" />
+  <button>生成截图对象</button>
+  <style>
+    .preview {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+  </style>
+  <script>
+    const inpFile = document.querySelector('input[type="file"]');
+    const img = document.querySelector('.preview');
+    const btn = document.querySelector('button');
+    inpFile.onchange = e => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        img.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+    const cutInfo = {
+        x: 100,
+        y: 100,
+        cutWidth: 300,
+        cutHeight: 300,
+        width: 100,
+        height: 100,
+    }
+    btn.onclick = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = cutInfo.width;
+      canvas.height = cutInfo.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(
+        img,
+        cutInfo.x,
+        cutInfo.y,
+        cutInfo.cutWidth,
+        cutInfo.cutHeight,
+        0,
+        0,
+        cutInfo.width,
+        cutInfo.height,
+      )
+      document.body.appendChild(canvas)
+      canvas.toBlob(blob => {
+        const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' })
+        console.log(file);
+      }, 'image/jpeg');
+    }
+    // Add drag functionality for screen cutting
+    let isDragging = false;
+    let startX, startY;
+    let rect = null;
+
+    img.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.offsetX;
+      startY = e.offsetY;
+
+      // Create selection rectangle if it doesn't exist
+      if (!rect) {
+        rect = document.createElement('div');
+        rect.style.position = 'absolute';
+        rect.style.border = '1px solid grey';
+        rect.style.pointerEvents = 'none';
+        document.body.appendChild(rect);
+      }
+
+      // Position rectangle at start point
+      rect.style.left = startX + img.offsetLeft + 'px';
+      rect.style.top = startY + img.offsetTop + 'px';
+      rect.style.width = '0px';
+      rect.style.height = '0px';
+    });
+
+    img.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+
+      const currentX = e.offsetX;
+      const currentY = e.offsetY;
+
+      // Calculate rectangle dimensions
+      const width = Math.abs(currentX - startX);
+      const height = Math.abs(currentY - startY);
+      const left = Math.min(startX, currentX) + img.offsetLeft;
+      const top = Math.min(startY, currentY) + img.offsetTop;
+
+      // Update rectangle position and size
+      rect.style.left = left + 'px';
+      rect.style.top = top + 'px';
+      rect.style.width = width + 'px';
+      rect.style.height = height + 'px';
+
+      // Update cut info object
+      cutInfo.x = Math.min(startX, currentX);
+      cutInfo.y = Math.min(startY, currentY);
+      cutInfo.cutWidth = width;
+      cutInfo.cutHeight = height;
+      cutInfo.width = width;
+      cutInfo.height = height;
+    });
+
+    img.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      isDragging = false;
+    });    
+  </script>
+</body>
+
+</html>
